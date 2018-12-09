@@ -36,4 +36,19 @@ public class Projectile : MonoBehaviour {
         if (te)
             te.SetExplosion(transform.position, collision.impulse, true);
     }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        if (collision.gameObject.tag != "Target")
+            return;
+
+        if (freezeOnCollision)
+            Time.timeScale = 0f;
+
+        Instantiate(collisionPointPrefab, transform.position, Quaternion.identity);
+
+        TriangleExplosion te = collision.GetComponent<TriangleExplosion>();
+        if (te)
+            te.SetExplosion(transform.position, GetComponent<Rigidbody>().velocity, true);
+    }
 }

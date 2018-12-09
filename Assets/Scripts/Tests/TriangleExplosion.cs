@@ -5,49 +5,61 @@ using System.Collections.Generic;
 
 public class TriangleExplosion : MonoBehaviour
 {
+    public List<GameObject> meshesToExplode;
     public Vector3 explosionPosition;
     public float minExplosionForce;
     public float maxExplosionForce;
+    public string trianglesLayer = "Particle";
+
+    private void Start()
+    {
+        if (meshesToExplode.Count == 0)
+            meshesToExplode.Add(gameObject);
+
+        foreach (GameObject mesh in meshesToExplode)
+        {
+            if (mesh.GetComponent<MeshFilter>() == null && mesh.GetComponent<SkinnedMeshRenderer>() == null)
+            {
+                Debug.LogError("NO MESH FOUND");
+            }
+        }
+    }
+
 
     public void SetExplosion(Vector3 contactPosition, Vector3 contactImpulse, bool destroy)
     {
         explosionPosition = contactPosition;
         minExplosionForce = contactImpulse.magnitude * 10f;
         maxExplosionForce = contactImpulse.magnitude * 200f;
-        StartCoroutine(SplitMesh(destroy));
+        foreach (GameObject mesh in meshesToExplode)
+            StartCoroutine(ExplodeMesh(mesh, destroy));
     }
 
-    public IEnumerator SplitMesh(bool destroy)
+    public IEnumerator ExplodeMesh(GameObject target, bool destroy)
     {
-
-        if (GetComponent<MeshFilter>() == null || GetComponent<SkinnedMeshRenderer>() == null)
-        {
-            yield return null;
-        }
-
-        if (GetComponent<Collider>())
+        if (target.GetComponent<Collider>())
         {
             GetComponent<Collider>().enabled = false;
         }
-        
+
         Mesh M = new Mesh();
-        if (GetComponent<MeshFilter>())
+        if (target.GetComponent<MeshFilter>())
         {
-            M = GetComponent<MeshFilter>().mesh;
+            M = target.GetComponent<MeshFilter>().mesh;
         }
-        else if (GetComponent<SkinnedMeshRenderer>())
+        else if (target.GetComponent<SkinnedMeshRenderer>())
         {
-            M = GetComponent<SkinnedMeshRenderer>().sharedMesh;
+            M = target.GetComponent<SkinnedMeshRenderer>().sharedMesh;
         }
 
         Material[] materials = new Material[0];
-        if (GetComponent<MeshRenderer>())
+        if (target.GetComponent<MeshRenderer>())
         {
-            materials = GetComponent<MeshRenderer>().materials;
+            materials = target.GetComponent<MeshRenderer>().materials;
         }
-        else if (GetComponent<SkinnedMeshRenderer>())
+        else if (target.GetComponent<SkinnedMeshRenderer>())
         {
-            materials = GetComponent<SkinnedMeshRenderer>().materials;
+            materials = target.GetComponent<SkinnedMeshRenderer>().materials;
         }
 
         Vector3[] verts = M.vertices;
@@ -78,7 +90,7 @@ public class TriangleExplosion : MonoBehaviour
                 mesh.triangles = new int[] { 0, 1, 2, 2, 1, 0 };
 
                 GameObject GO = new GameObject("Triangle " + (i / 3));
-                //GO.layer = LayerMask.NameToLayer("Particle");
+                GO.layer = LayerMask.NameToLayer(trianglesLayer);
                 GO.transform.position = transform.position;
                 GO.transform.rotation = transform.rotation;
                 GO.transform.localScale = transform.localScale;
@@ -92,15 +104,14 @@ public class TriangleExplosion : MonoBehaviour
             }
         }
 
-        GetComponent<Renderer>().enabled = false;
+
+        target.GetComponent<Renderer>().enabled = false;
 
         yield return new WaitForSeconds(1.0f);
         if (destroy == true)
         {
-            Destroy(gameObject);
+            Destroy(target);
         }
-
     }
-
 
 }
