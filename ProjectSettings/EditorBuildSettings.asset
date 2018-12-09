@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TriangleSplitTest.unity
     guid: ab76dcf4883286d4b8293f70d7d70183
+  - enabled: 1
+    path: Assets/Scenes/Voronoi.unity
+    guid: 989c4d57219b04b8d83d517bb8ad1a7c
   m_configObjects: {}
