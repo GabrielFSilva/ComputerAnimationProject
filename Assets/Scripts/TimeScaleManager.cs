@@ -49,4 +49,6 @@ public class TimeScaleManager : MonoBehaviour
 
         timeScaleLabel.SetText("Time Scale: " + Time.timeScale.ToString("n2"));
     }
+
+    
 }
