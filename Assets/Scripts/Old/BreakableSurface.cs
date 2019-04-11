@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GFS.Util;
 
 namespace GK {
 	public class BreakableSurface : MonoBehaviour {
@@ -19,7 +20,7 @@ namespace GK {
 		public float Area {
 			get {
 				if (_Area < 0.0f) {
-					_Area = Geom.Area(Polygon);
+					_Area = GeometryUtil.PolygonArea(Polygon);
 				}
 
 				return _Area;
