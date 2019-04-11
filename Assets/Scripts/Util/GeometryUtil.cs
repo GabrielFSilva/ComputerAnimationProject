@@ -123,6 +123,48 @@ namespace GFS.Util
             return true;
         }
 
+        public static bool LineLineIntersection(Vector2 p0, Vector2 v0, Vector2 p1, Vector2 v1, out float m0, out float m1)
+        {
+            var det = (v0.x * v1.y - v0.y * v1.x);
+
+            if (Mathf.Abs(det) < 0.001f)
+            {
+                m0 = float.NaN;
+                m1 = float.NaN;
+
+                return false;
+            }
+            else
+            {
+                m0 = ((p0.y - p1.y) * v1.x - (p0.x - p1.x) * v1.y) / det;
+
+                if (Mathf.Abs(v1.x) >= 0.001f)
+                {
+                    m1 = (p0.x + m0 * v0.x - p1.x) / v1.x;
+                }
+                else
+                {
+                    m1 = (p0.y + m0 * v0.y - p1.y) / v1.y;
+                }
+
+                return true;
+            }
+        }
+
+        public static Vector2 LineLineIntersection(Vector2 p0, Vector2 v0, Vector2 p1, Vector2 v1)
+        {
+            float m0, m1;
+
+            if (GeometryUtil.LineLineIntersection(p0, v0, p1, v1, out m0, out m1))
+            {
+                return p0 + m0 * v0;
+            }
+            else
+            {
+                return new Vector2(float.NaN, float.NaN);
+            }
+        }
+
         public static float PolygonArea(List<Vector2> vertexList)
         {
             if (vertexList.Count < 3)
@@ -173,7 +215,7 @@ namespace GFS.Util
 
             float m0, m1;
 
-            LineIntersection(mp0, v0, mp1, v1, out m0, out m1);
+            LineLineIntersection(mp0, v0, mp1, v1, out m0, out m1);
 
             return mp0 + m0 * v0;
         }
