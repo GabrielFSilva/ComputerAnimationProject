@@ -10,13 +10,13 @@ namespace GFS.Delaunay
         public readonly List<Vector2> vertexList;
         public readonly List<int> triangleList;
 
-        private DelaunayTriangulation()
+        internal DelaunayTriangulation()
         {
             vertexList = new List<Vector2>();
             triangleList = new List<int>();
         }
 
-        private void ClearLists()
+        internal void ClearLists()
         {
             vertexList.Clear();
             triangleList.Clear();
